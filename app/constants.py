@@ -1,0 +1,17 @@
+ENCODING = 'utf-8'
+
+CSV_DELIMITER = ','
+
+CSV_DIALECT = 'excel'
+
+TABLE_FMT = 'pretty'
+
+TABLE_ALIGN_COLUMN = 'left'
+
+TASK_PRECISION = 2
+
+ALLOWED_EXTENSIONS = set(
+	['csv']
+)
+
+ALLOWED_EXTENSIONS_STR = ', '.join(ALLOWED_EXTENSIONS)
