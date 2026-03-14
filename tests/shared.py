@@ -1,41 +1,48 @@
 import os
 
+import sys
+
 from subprocess import (
-	Popen,
-	PIPE
+    Popen,
+    PIPE
 )
 
 
-from settings import (
-	ENCODING,
-	TEST_DATA_DIR
+CWD = os.getcwd()
+
+sys.path.append(CWD)
+
+
+from app.constants import (
+    ENCODING,
+    ALLOWED_EXTENSIONS
 )
 
 
-TEST_FILES = list(
-	os.path.join(TEST_DATA_DIR, f)
-	for f in os.listdir(TEST_DATA_DIR)
+TEST_FILES_FOLDER = os.path.join(CWD, 'tests', 'reports')
+
+TEST_FILES: frozenset[str] = frozenset(
+    os.path.join(TEST_FILES_FOLDER, file_)
+    for file_
+    in os.listdir(TEST_FILES_FOLDER)
+    if file_.split(os.extsep)[-1] in ALLOWED_EXTENSIONS
 )
 
-TEST_FILES_ARGS = ' '.join(TEST_FILES)
+INVALID_FILE = os.path.join(TEST_FILES_FOLDER, 'clown.png')
 
-COUNTRIES_LST = [
-	'Denmark', 'China', 'Russia',
-	'Finland', 'Spain', 'Turkey',
-	'Switzerland', 'Indonesia',
-	'South Korea', 'Italy', 'Brazil'
-]
+TEST_FILES_ARGS_STR = ' '.join(TEST_FILES)
+
+ENABLE_FILE_SCHEME_TESTS = True
+
+ENABLE_MEDIAN_COFFEE_REPORT_TESTS = True
 
 
-def run_command(command):
-	proc = Popen(
-		command,
-		shell=True,
-		stdout=PIPE,
-		stderr=PIPE
-	)
-	out, err = proc.communicate()
-	return (
-		out.decode(ENCODING).strip(),
-		err.decode(ENCODING).strip()
-	)
+def run_command(command: str) -> str:
+    proc = Popen(
+        command,
+        shell=True,
+        stdout=PIPE,
+        stderr=PIPE
+    )
+    out, err = proc.communicate()
+    return err.decode(ENCODING).strip()

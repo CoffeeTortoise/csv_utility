@@ -1,37 +1,49 @@
-import argparse
+from argparse import ArgumentParser
 
-
-from app.reporter import cli_reporter
+from app.validators import validate_files
 
 from app.constants import ALLOWED_EXTENSIONS_STR
 
+from app.students.median_coffee_report import cli_median_coffee
+
+
+REPORTS = {
+    'median_coffee': cli_median_coffee
+}
+
 
 def main():
-	parser = argparse.ArgumentParser(
-		description='''
-		cli-utility for reading csv files
-		'''
-	)
+    parser = ArgumentParser(
+        description='''
+        cli-utility for processing csv-files.
+        '''
+    )
 
-	parser.add_argument(
-		'--files', nargs='+', required=True,
-		help=f'''
-		List of files to create a report.
-		Available file extensions: {ALLOWED_EXTENSIONS_STR}
-		'''
-	)
+    parser.add_argument(
+        '--report', 
+        choices=list(REPORTS.keys()),
+        required=True,
+        type=str,
+        help='''
+        Report type.
+        '''
+    )
+    
+    parser.add_argument(
+        '--files',
+        required=True,
+        nargs='+',
+        help=f'''
+        Files to work with. Allowed file extensions: {ALLOWED_EXTENSIONS_STR}
+        '''
+    )
+    
+    args = parser.parse_args()
 
-	parser.add_argument(
-		'--report', required=True,
-		help='''
-		Most important argument. Must have value average-gdp.
-		'''
-	)
+    validate_files(args.files)
 
-	cli_reporter(
-		parser.parse_args()
-	)
+    REPORTS[args.report](args)
 
 
 if __name__ == '__main__':
-	main()
+    main()

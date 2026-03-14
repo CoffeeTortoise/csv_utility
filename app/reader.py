@@ -1,7 +1,6 @@
 import csv
 
-
-from .datatypes import CountryData
+from contextlib import contextmanager
 
 from .constants import (
 	ENCODING,
@@ -10,23 +9,12 @@ from .constants import (
 )
 
 
-def read_csv(filepath):
+@contextmanager
+def csv_reader(filepath: str):
 	with open(filepath, 'r', encoding=ENCODING) as f:
 		reader = csv.reader(
 			f,
 			dialect=CSV_DIALECT,
 			delimiter=CSV_DELIMITER
 		)
-		for i, row in enumerate(reader):
-			if i == 0:
-				continue
-			yield CountryData(
-				country=row[0],
-				year=int(row[1]),
-				gdp=float(row[2]),
-				gdp_growth=float(row[3]),
-				inflation=float(row[4]),
-				unemployment=float(row[5]),
-				population=int(row[6]),
-				continent=row[7]
-			)
+		yield reader
